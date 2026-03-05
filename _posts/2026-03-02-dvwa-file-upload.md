@@ -9,13 +9,35 @@ image:
 ---
 
 
-### Introduction
+### **Introduction**
+
+The File Upload module in Damn Vulnerable Web Application demonstrates how improper validation of uploaded files can lead to serious security issues, including Remote Code Execution (RCE) and full server compromise. This lab highlights how different security levels (Low, Medium, High) attempt to protect against malicious uploads — and how weak implementations can still be bypassed.
+
+At the Low security level, the application blindly trusts user input and does not validate file type, content, or extension. This allows an attacker to upload a malicious PHP web shell and execute system commands directly from the browser.
+
+At the Medium level, the application restricts uploads to JPEG and PNG images based on client-side checks and MIME type validation. However, since this validation can be manipulated during interception (e.g., modifying file extensions), it remains vulnerable to bypass techniques.
+
+At the High level, additional validation is introduced, including extension checks and server-side image verification using getimagesize(). While this strengthens security, the lab demonstrates how attackers can embed PHP payloads into image metadata (such as EXIF fields) and later trigger execution through a separate Local File Inclusion (LFI) vulnerability.
+
+By combining File Upload weaknesses with LFI vulnerabilities, an attacker can escalate the attack from simple file upload to full Remote Code Execution. This reflects a common real-world scenario where multiple low-severity flaws chain together into critical exploitation.
+
+This lab is an excellent demonstration of:
+
+- Insecure file handling
+
+- Weak server-side validation
+
+- Bypassing file type restrictions
+
+- Web shell deployment
+
+- Chaining vulnerabilities (File Upload + LFI → RCE)
+
+Overall, the DVWA File Upload module teaches an important lesson: validating only file extensions or MIME types is not enough. Secure file handling requires strict server-side validation, content inspection, proper storage configuration, and execution prevention controls.
 
 
-The DVWA (Damn Vulnerable Web Application) File Upload lab lets you safely explore how web applications handle file uploads. It’s a hands-on way to learn about common security issues like unrestricted uploads and how attackers might exploit them. Perfect for anyone looking to practice real-world web security techniques in a controlled environment.
 
-
-### Security: Low
+### **Security: Low**
 > Low level does not check the contents of uploaded files. It only trusts them.
 
 ``` php
@@ -91,7 +113,7 @@ www-data@bc264d5dbb36:/var/www/html/hackable/uploads $
 
 
 
-### Security: Medium
+### **Security: Medium**
 > Only JPEG and PNG extensions are allowed from the client when its being uploaded.
 
 ``` php
@@ -139,7 +161,7 @@ if( isset( $_POST[ 'Upload' ] ) ) {
 
 
 
-### Security: High
+### **Security: High**
 > Once the file has been received from the client, the server will try to resize any image that was included in the request.
 
 

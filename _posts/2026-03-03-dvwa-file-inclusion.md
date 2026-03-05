@@ -8,7 +8,7 @@ image:
   alt: DVWA
 ---
 
-### Introduction
+### **Introduction**
 
 In this lab, we examine Local File Inclusion (LFI) using Damn Vulnerable Web Application (DVWA). LFI is a web vulnerability that occurs when an application dynamically includes files based on user-controlled input without proper validation.
 
@@ -35,7 +35,7 @@ DVWA demonstrates this vulnerability across multiple security levels:
 Through this lab, we learn how improper input validation leads to file disclosure and how incremental security controls attempt to mitigate the risk. The goal is to understand both how LFI works and why secure coding practices, such as strict whitelisting and proper path handling, are essential in web applications.
 
 
-### Security: Low
+### **Security: Low**
 > let’s retrieve its contents. By employing the following GET request, we can read the contents of the etc password file.
 
 ```
@@ -91,7 +91,7 @@ nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
 ```
 
 
-## Security: Medium
+### **Security: Medium**
 
 > In this case, code includes a little validation checks, it also replaces `../` with the empty string: `""`.
 
@@ -122,7 +122,7 @@ $file = str_replace( array( "../", "..\\" ), "", $file );
 
 
 
-## Security: High
+### **Security: High**
 
 > It allows only:
 - Files that start with `"file"`
