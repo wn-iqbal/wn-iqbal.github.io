@@ -270,7 +270,7 @@ Megapixels                      : 0.000230
 
 
 
-#### Via RCE
+#### File Upload + LFI → RCE
 
 1) Just changing metadata using exiftool:
 
