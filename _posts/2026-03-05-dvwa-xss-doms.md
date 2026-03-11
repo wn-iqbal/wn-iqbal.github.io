@@ -73,6 +73,9 @@ if ( array_key_exists( "default", $_GET ) && !is_null ($_GET[ 'default' ]) ) {
 
 1) The developer upgraded from simple detection to active replacement. However, we can adapt with an SVG payload that doesn't contain <script:
 
+List Payload 
+
+
 ``` js
 <svg/onload=alert`INJECTX`>
 ```
