@@ -10,11 +10,20 @@ image:
 
 
 
-### intro
+### Introduction
+If you're learning web application security, you've probably heard of DVWA (Damn Vulnerable Web Application). It's a PHP/MySQL web app designed specifically for security testing - a safe playground where you can practice hacking techniques without breaking the law.
 
+DVWA has different security levels: Low, Medium, and High. Each level shows us how vulnerabilities appear in real code and why certain fixes don't always work.
 
-dsa
+In this post, I'll walk through the Command Injection challenge. You'll see:
 
+- **Low Security** - No filters, direct system command execution
+- **Medium Security** - Basic filters that are easy to bypass
+- **High Security** - More filters, but a simple typo ruins everything
+
+I'll also show you how to go from simple command injection to getting a reverse shell on the server.
+
+Let's dive in!
 
 
 ### **Security: Low**
